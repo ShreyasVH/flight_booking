@@ -47,7 +47,7 @@ class LogoutView(APIView):
         if request.user.is_authenticated:
             auth_logout(request)
 
-        return redirect('/login')
+        return redirect('/user/login')
 
 
 def signup_view(request):
@@ -56,7 +56,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             # login(request, user)  # optional: logs in the user immediately
-            return redirect('/login')  # or a dashboard URL
+            return redirect('/user/login')  # or a dashboard URL
     else:
         form = SignUpForm()
     return render(request, 'auth_manager/signup.html', {'form': form})
