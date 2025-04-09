@@ -1,0 +1,12 @@
+coverage
+cryptography==43.0.3
+django-cors-headers==4.7.0
+django-extensions==3.2.3
+django-rest-framework==0.1.0
+Django==4.2.19
+djangorestframework==3.15.2
+psycopg2-binary==2.9.10
+pydantic_core==2.4.0
+pydantic==2.1.1
+pytest-django
+pytest-cov

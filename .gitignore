@@ -1,0 +1,15 @@
+# Ignore pytest cache files
+*/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pytest_cache/
+*.pyc
+
+# Ignore SQL files
+*.sql
+.coverage
+.envrc
+.idea
+todo.txt
+.DS_Store
