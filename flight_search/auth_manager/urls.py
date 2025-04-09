@@ -7,4 +7,5 @@ urlpatterns: list[URLPattern] = [
     path("user/logout/", LogoutView.as_view(), name="logout"),
     path('signup/', signup_view, name='signup'),
     path('dashboard/', dashboard_view, name='dashboard'),
+    path('', dashboard_view, name='home'),
 ]
