@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Flights</title>
+</head>
+<body>
+    <h2>Flights Scheduled by {{ request.user.flight_company.name }}</h2>
+
+    {% if flights %}
+        <table border="1" cellpadding="8">
+            <tr>
+                <th>Source</th>
+                <th>Destination</th>
+                <th>Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Duration</th>
+                <th>Cost</th>
+            </tr>
+            {% for flight in flights %}
+                <tr>
+                    <td>{{ flight.source }}</td>
+                    <td>{{ flight.destination }}</td>
+                    <td>{{ flight.date }}</td>
+                    <td>{{ flight.start_time }}</td>
+                    <td>{{ flight.end_time }}</td>
+                    <td>{{ flight.duration }}</td>
+                    <td>{{ flight.cost }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No flights scheduled yet.</p>
+    {% endif %}
+
+    <p><a href="/dashboard/">Back to Dashboard</a></p>
+</body>
+</html>

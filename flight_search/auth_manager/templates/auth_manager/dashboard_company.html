@@ -8,6 +8,10 @@
     <p>You are logged in as a <strong>Flight Company</strong> user.</p>
     <p>Company: <strong>{{ company_name }}</strong></p>
 
+    <p><a href="/flights/list/">View All Flights</a></p>
+    <p><a href="/flights/">Add New Flight</a></p>
+
+
     <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
         <button type="submit">Logout</button>

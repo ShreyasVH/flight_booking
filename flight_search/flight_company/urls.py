@@ -6,6 +6,7 @@ from .views import (
     GetOrUpdateOperator,
     CreateFlight,
     OperatorReport,
+    ListFlights
 )
 
 urlpatterns: list[URLPattern] = [
@@ -13,7 +14,8 @@ urlpatterns: list[URLPattern] = [
     path(
         "operators/<int:operator_id>/", GetOrUpdateOperator.as_view(), name="operators"
     ),
-    path("flights/", CreateFlight.as_view(), name="create_flight"),
+    path("flights/list/", ListFlights.as_view(), name="create_flight"),
+    path("flights/", CreateFlight.as_view(), name="list_flights"),
     path("flights/<int:flight_id>/", GetOrUpdateFlight.as_view(), name="flights"),
     path(
         "operators/<int:operator_id>/reports/<int:year>/<str:quarter>/",
