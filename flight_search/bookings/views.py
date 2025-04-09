@@ -8,11 +8,12 @@ from bookings.forms import FlightSearchForm, SeatSelectionForm
 from flight_company.models import Flight
 from bookings.models import Booking
 from rest_framework.permissions import IsAuthenticated
+from auth_manager.permissions import IsPassenger
 
 
 class Search(APIView):
     # implement proper permissions here
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsPassenger]
 
     def post(
         self,
@@ -28,9 +29,6 @@ class Search(APIView):
 
     def get(self, request: Request):
         user = request.user
-
-        if user.role != 'PASSENGER':
-            return redirect('/dashboard/')
 
         form = FlightSearchForm(request.GET or None)
         flights = Flight.objects.all()
@@ -49,9 +47,10 @@ class Search(APIView):
 
         return render(request, 'bookings/flight_search.html', {'form': form, 'flights': flights})
 
+
 class GetOrUpdateBooking(APIView):
     # implement proper permissions here
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsPassenger]
 
     def get(self, request: Request, booking_id: int) -> Response: ...
     def post(self, request: Request, booking_id: int):
@@ -65,13 +64,10 @@ class GetOrUpdateBooking(APIView):
 
 class MyBookings(APIView):
     # implement proper permissions here
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsPassenger]
 
     def get(self, request: Request):
         user = request.user
-
-        if user.role != 'PASSENGER':
-            return redirect('/dashboard/')
 
         bookings = Booking.objects.select_related('flight').filter(passenger=user).order_by('-booked_at')
 
@@ -80,13 +76,10 @@ class MyBookings(APIView):
 
 class CreateBooking(APIView):
     # implement proper permissions here
-    permission_classes = []
+    permission_classes = [IsAuthenticated, IsPassenger]
 
     def post(self, request: Request, flight_id):
         user = request.user
-
-        if user.role != 'PASSENGER':
-            return redirect('/dashboard/')
 
         flight = get_object_or_404(Flight, id=flight_id)
 
@@ -106,9 +99,6 @@ class CreateBooking(APIView):
 
     def get(self, request: Request, flight_id):
         user = request.user
-
-        if user.role != 'PASSENGER':
-            return redirect('/dashboard/')
 
         flight = get_object_or_404(Flight, id=flight_id)
 

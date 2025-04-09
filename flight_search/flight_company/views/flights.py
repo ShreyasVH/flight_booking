@@ -6,11 +6,12 @@ from flight_company.forms import FlightForm
 from flight_company.models import Flight
 from bookings.models import Booking
 from rest_framework.permissions import IsAuthenticated
+from auth_manager.permissions import IsFlightCompany
 
 
 class GetOrUpdateFlight(APIView):
     # implement proper permissions here
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsFlightCompany]
 
     def get(self, request: Request, flight_id: int) -> Response:
         """
@@ -55,7 +56,7 @@ class GetOrUpdateFlight(APIView):
 
 class CreateFlight(APIView):
     # implement proper permissions here
-    permission_classes = []
+    permission_classes = [IsAuthenticated, IsFlightCompany]
 
     def post(self, request: Request):
         """
@@ -74,13 +75,10 @@ class CreateFlight(APIView):
             flight.company = user.flight_company
             flight.save()
 
-        return redirect('/dashboard/')
+        return redirect('/flights/list')
 
     def get(self, request: Request):
         user = request.user
-
-        if user.role != 'FLIGHT_COMPANY':
-            return redirect('/auth/dashboard/')
 
         form = FlightForm()
 
@@ -88,6 +86,8 @@ class CreateFlight(APIView):
 
 
 class ListFlights(APIView):
+    permission_classes = [IsAuthenticated, IsFlightCompany]
+
     def get(self, request: Request):
         """
         This will fetch all the details for a flight.
@@ -95,20 +95,17 @@ class ListFlights(APIView):
         ...
         user = request.user
 
-        if user.role != 'FLIGHT_COMPANY':
-            return redirect('/dashboard/')
-
         flights = Flight.objects.filter(company=user.flight_company).order_by('date', 'start_time')
 
         return render(request, 'flight_company/view_flights.html', {'flights': flights})
 
 
 class Passengers(APIView):
+    permission_classes = [IsAuthenticated, IsFlightCompany]
+
     def get(self, request: Request, flight_id):
         user = request.user
 
-        if user.role != 'FLIGHT_COMPANY':
-            return redirect('/dashboard/')
         flight = get_object_or_404(Flight, id=flight_id, company=user.flight_company)
 
         bookings = Booking.objects.filter(flight=flight).select_related('passenger').order_by('seat_number')
