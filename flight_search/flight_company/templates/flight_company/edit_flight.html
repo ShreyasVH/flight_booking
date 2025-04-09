@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Flight</title>
+</head>
+<body>
+    <h2>Edit Flight: {{ flight.source }} → {{ flight.destination }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <p><a href="/flights/my/">Back to My Flights</a></p>
+</body>
+</html>

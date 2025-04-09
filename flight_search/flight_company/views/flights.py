@@ -1,14 +1,15 @@
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from flight_company.forms import FlightForm
 from flight_company.models import Flight
+from rest_framework.permissions import IsAuthenticated
 
 
 class GetOrUpdateFlight(APIView):
     # implement proper permissions here
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def get(self, request: Request, flight_id: int) -> Response:
         """
@@ -16,11 +17,30 @@ class GetOrUpdateFlight(APIView):
         """
         ...
 
+        user = request.user
+        flight = get_object_or_404(Flight, id=flight_id, company=user.flight_company)
+
+        form = FlightForm(instance=flight)
+        return render(request, 'flight_company/edit_flight.html', {'form': form, 'flight': flight})
+
     def post(self, request: Request, flight_id: int) -> Response:
         """
         This will update all the details for a flight.
         """
         ...
+        user = request.user
+        flight = get_object_or_404(Flight, id=flight_id, company=user.flight_company)
+
+        if request.POST.get("_method") == "DELETE":
+            flight.delete()
+            return redirect('/flights/list/')
+
+        form = FlightForm(request.POST, instance=flight)
+        if form.is_valid():
+            form.save()
+            return redirect('/flights/list/')
+        return render(request, 'flight_company/edit_flight.html', {'form': form, 'flight': flight})
+
 
     def delete(self, request: Request, flight_id: int) -> Response:
         """
