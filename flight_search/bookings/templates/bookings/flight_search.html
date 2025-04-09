@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Flights</title>
+</head>
+<body>
+    <h2>Search for Flights</h2>
+
+    <form method="get">
+        {{ form.as_p }}
+        <button type="submit">Search</button>
+    </form>
+
+    <hr>
+
+    {% if flights %}
+        <table border="1">
+            <tr>
+                <th>Company</th>
+                <th>Source</th>
+                <th>Destination</th>
+                <th>Date</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Cost</th>
+                <th>Action</th>
+            </tr>
+            {% for flight in flights %}
+            <tr>
+                <td>{{ flight.company }}</td>
+                <td>{{ flight.source }}</td>
+                <td>{{ flight.destination }}</td>
+                <td>{{ flight.date }}</td>
+                <td>{{ flight.start_time }}</td>
+                <td>{{ flight.end_time }}</td>
+                <td>{{ flight.cost }}</td>
+                <td>
+                    <a href="/bookings/create/{{flight.id}}">Book</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No flights found.</p>
+    {% endif %}
+</body>
+</html>

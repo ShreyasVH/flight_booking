@@ -21,4 +21,5 @@ urlpatterns = [
     # app urls
     re_path(r"^", include("auth_manager.urls")),
     re_path(r"^", include("flight_company.urls")),
+    re_path(r"^", include("bookings.urls"))
 ]

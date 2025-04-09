@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Bookings</title>
+</head>
+<body>
+    <h2>My Bookings</h2>
+
+    {% if bookings %}
+        <table border="1" cellpadding="6">
+            <tr>
+                <th>Flight</th>
+                <th>Date</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Seat</th>
+                <th>Cost</th>
+                <th>Booked At</th>
+            </tr>
+            {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.flight.company.name }}</td>
+                    <td>{{ booking.flight.date }}</td>
+                    <td>{{ booking.flight.start_time }}</td>
+                    <td>{{ booking.flight.end_time }}</td>
+                    <td>{{ booking.flight.source }}</td>
+                    <td>{{ booking.flight.destination }}</td>
+                    <td>{{ booking.seat_number }}</td>
+                    <td>{{ booking.flight.cost }}</td>
+                    <td>{{ booking.booked_at }}</td>
+                    <td>
+                        <form method="post" action="{% url 'bookings' booking.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>You haven't booked any flights yet.</p>
+    {% endif %}
+
+    <p><a href="/search/">Search Flights</a></p>
+</body>
+</html>
