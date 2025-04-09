@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from django.shortcuts import render, redirect, get_object_or_404
 from flight_company.forms import FlightForm
 from flight_company.models import Flight
+from bookings.models import Booking
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -101,17 +102,18 @@ class ListFlights(APIView):
 
         return render(request, 'flight_company/view_flights.html', {'flights': flights})
 
-    def post(self, request: Request, flight_id: int) -> Response:
-        """
-        This will update all the details for a flight.
-        """
-        ...
 
-    def delete(self, request: Request, flight_id: int) -> Response:
-        """
-        This view will delete a flight operation.
+class Passengers(APIView):
+    def get(self, request: Request, flight_id):
+        user = request.user
 
-        Once this flight is deleted, you will need update the flight graph
-        Such that in the next search, this flight is removed
-        """
-        ...
+        if user.role != 'FLIGHT_COMPANY':
+            return redirect('/dashboard/')
+        flight = get_object_or_404(Flight, id=flight_id, company=user.flight_company)
+
+        bookings = Booking.objects.filter(flight=flight).select_related('passenger').order_by('seat_number')
+
+        return render(request, 'flight_company/flight_passengers.html', {
+            'flight': flight,
+            'bookings': bookings
+        })

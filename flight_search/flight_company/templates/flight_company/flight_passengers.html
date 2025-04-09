@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Passengers - Flight {{ flight.id }}</title>
+</head>
+<body>
+    <h2>Passengers on {{ flight.source }} → {{ flight.destination }} ({{ flight.date }})</h2>
+
+    {% if bookings %}
+        <table border="1" cellpadding="6">
+            <tr>
+                <th>Passenger Name</th>
+                <th>Seat Number</th>
+            </tr>
+            {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.passenger.username }}</td>
+                    <td>{{ booking.seat_number }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No passengers have booked this flight yet.</p>
+    {% endif %}
+
+    <p><a href="/flights/list">← Back to My Flights</a></p>
+</body>
+</html>
