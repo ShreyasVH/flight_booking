@@ -13,3 +13,4 @@
 .idea
 todo.txt
 .DS_Store
+.env
