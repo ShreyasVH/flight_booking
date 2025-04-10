@@ -59,7 +59,7 @@ ROOT_URLCONF = "flight_search.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': [BASE_DIR / "flight_search/templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -136,3 +136,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/user/login/'
 LOGIN_URL = '/user/login/'
+
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'flight_search.exception_handlers.custom_exception_handler'
+}
