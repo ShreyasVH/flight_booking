@@ -13,6 +13,13 @@ class FlightForm(forms.ModelForm):
             'end_time': forms.TimeInput(attrs={'type': 'time'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company', None)
+        super().__init__(*args, **kwargs)
+
+        if company:
+            self.fields['operator'].queryset = Operator.objects.filter(company=company)
+
 
 class ReportSelectorForm(forms.Form):
     current_year = date.today().year

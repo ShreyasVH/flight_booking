@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('flight_company', '0001_initial'),
+        ('flight_company', '0002_add_flight_entity'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 

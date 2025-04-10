@@ -22,7 +22,7 @@ class GetOrUpdateFlight(APIView):
         user = request.user
         flight = get_object_or_404(Flight, id=flight_id, company=user.flight_company)
 
-        form = FlightForm(instance=flight)
+        form = FlightForm(instance=flight, company=user.flight_company)
         return render(request, 'flight_company/edit_flight.html', {'form': form, 'flight': flight})
 
     def post(self, request: Request, flight_id: int) -> Response:
@@ -80,7 +80,7 @@ class CreateFlight(APIView):
     def get(self, request: Request):
         user = request.user
 
-        form = FlightForm()
+        form = FlightForm(company=user.flight_company)
 
         return render(request, 'flight_company/create_flight.html', {'form': form})
 
