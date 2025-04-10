@@ -53,29 +53,31 @@ class OperatorReport(APIView):
 
         start_date = datetime(year, start_month, 1).date()
         if end_month == 12:
-            end_date = datetime(year + 1, 1, 1).date()
+            end_date = datetime(year + 1, 1, 1)
         else:
-            end_date = datetime(year, end_month + 1, 1).date()
+            end_date = datetime(year, end_month + 1, 1)
+
+        now = datetime.now()
+        if end_date > now:
+            end_date = now
 
         flights = Flight.objects.filter(
             operator_id=operator_id,
-            date__gte=start_date,
-            date__lt=end_date,
+            end_time__gte=start_date,
+            end_time__lt=end_date,
         )
 
-        now = datetime.now()
+
         total_hours = 0.0
         flight_ids = []
         for flight in flights:
-            dt_start = datetime.combine(flight.date, flight.start_time)
-            dt_end = datetime.combine(flight.date, flight.end_time)
-            if dt_end < dt_start:
-                dt_end += timedelta(days=1)
+            start_time = flight.start_time
+            end_time = flight.end_time
 
-            if dt_end < now:
-                flight_ids.append(flight.id)
-                duration_hours = (dt_end - dt_start).total_seconds() / 3600
-                total_hours += duration_hours
+            flight_ids.append(flight.id)
+            duration_hours = (end_time - start_time).total_seconds() / 3600
+            total_hours += duration_hours
+
 
         total_flights = len(flight_ids)
         bookings = Booking.objects.filter(flight_id__in=flight_ids)

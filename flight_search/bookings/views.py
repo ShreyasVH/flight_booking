@@ -9,7 +9,7 @@ from flight_company.models import Flight
 from bookings.models import Booking
 from rest_framework.permissions import IsAuthenticated
 from auth_manager.permissions import IsPassenger
-
+from datetime import datetime, timedelta
 
 class Search(APIView):
     # implement proper permissions here
@@ -31,7 +31,8 @@ class Search(APIView):
         user = request.user
 
         form = FlightSearchForm(request.GET or None)
-        flights = Flight.objects.all()
+        now = datetime.now()
+        flights = Flight.objects.filter(start_time__gte=now)
 
         if form.is_valid():
             source = form.cleaned_data.get('source')
@@ -43,7 +44,9 @@ class Search(APIView):
             if destination:
                 flights = flights.filter(destination__icontains=destination)
             if date:
-                flights = flights.filter(date=date)
+                start = datetime.combine(date, datetime.min.time())
+                end = start + timedelta(days=1)
+                flights = flights.filter(start_time__gte=start, start_time__lt=end)
 
         return render(request, 'bookings/flight_search.html', {'form': form, 'flights': flights})
 
@@ -68,8 +71,8 @@ class MyBookings(APIView):
 
     def get(self, request: Request):
         user = request.user
-
-        bookings = Booking.objects.select_related('flight').filter(passenger=user).order_by('-booked_at')
+        now = datetime.now()
+        bookings = Booking.objects.select_related('flight').filter(passenger=user, flight__start_time__gte=now).order_by('flight__start_time')
 
         return render(request, 'bookings/my_bookings.html', {'bookings': bookings})
 

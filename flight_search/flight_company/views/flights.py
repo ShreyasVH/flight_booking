@@ -7,6 +7,7 @@ from flight_company.models import Flight
 from bookings.models import Booking
 from rest_framework.permissions import IsAuthenticated
 from auth_manager.permissions import IsFlightCompany
+from datetime import datetime
 
 
 class GetOrUpdateFlight(APIView):
@@ -94,8 +95,8 @@ class ListFlights(APIView):
         """
         ...
         user = request.user
-
-        flights = Flight.objects.filter(company=user.flight_company).order_by('date', 'start_time')
+        now = datetime.now()
+        flights = Flight.objects.filter(company=user.flight_company, start_time__gte=now).order_by('start_time')
 
         return render(request, 'flight_company/view_flights.html', {'flights': flights})
 

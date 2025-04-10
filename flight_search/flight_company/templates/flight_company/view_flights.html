@@ -12,10 +12,9 @@
                 <th>Source</th>
                 <th>Destination</th>
                 <th>Operator</th>
-                <th>Date</th>
                 <th>Start Time</th>
                 <th>End Time</th>
-                <th>Duration</th>
+                <th>Duration (Hrs)</th>
                 <th>Cost</th>
             </tr>
             {% for flight in flights %}
@@ -23,10 +22,9 @@
                     <td>{{ flight.source }}</td>
                     <td>{{ flight.destination }}</td>
                     <td>{{ flight.operator }}</td>
-                    <td>{{ flight.date }}</td>
                     <td>{{ flight.start_time }}</td>
                     <td>{{ flight.end_time }}</td>
-                    <td>{{ flight.duration }}</td>
+                    <td>{{ flight.duration_hours }}</td>
                     <td>{{ flight.cost }}</td>
                     <td>
                         <a href="{% url 'flights' flight.id %}">Edit</a> |

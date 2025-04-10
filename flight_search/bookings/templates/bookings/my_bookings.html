@@ -10,7 +10,6 @@
         <table border="1" cellpadding="6">
             <tr>
                 <th>Flight</th>
-                <th>Date</th>
                 <th>Start</th>
                 <th>End</th>
                 <th>From</th>
@@ -22,7 +21,6 @@
             {% for booking in bookings %}
                 <tr>
                     <td>{{ booking.flight.company.name }}</td>
-                    <td>{{ booking.flight.date }}</td>
                     <td>{{ booking.flight.start_time }}</td>
                     <td>{{ booking.flight.end_time }}</td>
                     <td>{{ booking.flight.source }}</td>
