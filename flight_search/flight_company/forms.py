@@ -23,7 +23,7 @@ class FlightForm(forms.ModelForm):
 class ReportSelectorForm(forms.Form):
     current_year = date.today().year
     start_year = 2000
-    YEARS = [(y, y) for y in range(start_year, current_year + 1)]
+    YEARS = [(y, y) for y in range(current_year, start_year - 1, -1)]
     QUARTERS = [("Q1", "Q1"), ("Q2", "Q2"), ("Q3", "Q3"), ("Q4", "Q4")]
 
     year = forms.ChoiceField(choices=YEARS, label="Year")
