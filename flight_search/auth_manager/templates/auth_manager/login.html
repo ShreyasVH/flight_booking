@@ -21,12 +21,26 @@
 <html>
 <head>
     <title>Login</title>
+
+    <style>
+        .message .success {
+            color: green;
+        }
+
+        .message .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <h2>Login</h2>
 
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
+    {% if messages %}
+        <div class="message">
+          {% for message in messages %}
+            <p class="{{ message.tags }}">{{ message }}</p>
+          {% endfor %}
+        </div>
     {% endif %}
 
     <form method="post" action="{% url 'login' %}">

@@ -10,6 +10,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .models import User
+from django.contrib import messages
 
 
 class LoginView(APIView):
@@ -27,14 +28,16 @@ class LoginView(APIView):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return render(request, 'auth_manager/login.html', {'error': 'Invalid credentials'})
+            messages.error(request, 'Invalid credentials')
+            return render(request, 'auth_manager/login.html')
 
         user = authenticate(request, username=user.username, password=password)
         if user is not None:
             auth_login(request, user)
             return redirect('/dashboard/')
         else:
-            return render(request, 'auth_manager/login.html', {'error': 'Invalid credentials'})
+            messages.error(request, 'Invalid credentials')
+            return render(request, 'auth_manager/login.html')
 
     def get(self, request):
         return render(request, 'auth_manager/login.html')
@@ -55,7 +58,7 @@ def signup_view(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # login(request, user)  # optional: logs in the user immediately
+            messages.success(request, 'Signup successful. Please login')
             return redirect('/user/login')  # or a dashboard URL
     else:
         form = SignUpForm()
