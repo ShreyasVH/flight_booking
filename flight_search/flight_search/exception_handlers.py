@@ -10,7 +10,7 @@ def custom_exception_handler(exc, context):
     print(exc)
     print(type(exc))
 
-    if isinstance(exc, PermissionDenied):
+    if isinstance(exc, PermissionDenied) or isinstance(exc, NotAuthenticated):
         # Redirect HTML views, fallback to JSON for API clients
         print('permission denied')
         return render(request, '403.html', status=403)
