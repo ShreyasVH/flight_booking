@@ -24,7 +24,7 @@ class ReportSelectorForm(forms.Form):
     quarter = forms.ChoiceField(choices=QUARTERS, label="Quarter")
 
 
-class CreateOperatorForm(forms.ModelForm):
+class OperatorForm(forms.ModelForm):
     class Meta:
         model = Operator
         exclude = ['company']  # we’ll assign company from the logged-in user
