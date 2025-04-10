@@ -31,6 +31,7 @@ class OperatorReport(APIView):
     def get(
         self,
         request: Request,
+        operator_id: int,
         year: int,
         quarter: Literal["Q1", "Q2", "Q3", "Q4"],
     ):
@@ -57,7 +58,7 @@ class OperatorReport(APIView):
             end_date = datetime(year, end_month + 1, 1).date()
 
         flights = Flight.objects.filter(
-            company=user.flight_company,
+            operator_id=operator_id,
             date__gte=start_date,
             date__lt=end_date,
         )
@@ -91,7 +92,7 @@ class OperatorReport(APIView):
         )
 
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="report_{year}_{quarter}.csv"'
+        response['Content-Disposition'] = f'attachment; filename="report_{year}_{quarter}_{operator_id}.csv"'
 
         writer = csv.writer(response)
         writer.writerow(["Year", "Quarter", "Total Flights", "Total Passengers", "Total Hours", "Revenue"])
@@ -111,16 +112,18 @@ class ReportSelector(APIView):
     permission_classes = [IsAuthenticated, IsFlightCompany]
 
     def get(self, request: Request):
-        form = ReportSelectorForm()
+        user = request.user
+        form = ReportSelectorForm(company=user.flight_company)
         return render(request, 'flight_company/select_report.html', {'form': form})
 
     def post(self, request):
-        form = ReportSelectorForm(request.POST)
+        user = request.user
+        form = ReportSelectorForm(request.POST, company=user.flight_company)
         if form.is_valid():
             year = form.cleaned_data['year']
             quarter = form.cleaned_data['quarter']
-            # operator_id = request.user.flight_company.id
+            operator_id = form.cleaned_data['operator']
 
-            return redirect(f'/operators/reports/{year}/{quarter}/')
+            return redirect(f'/operators/{operator_id}/reports/{year}/{quarter}/')
 
         return render(request, 'flight_company/select_report.html', {'form': form})

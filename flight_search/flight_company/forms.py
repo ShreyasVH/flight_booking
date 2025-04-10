@@ -29,6 +29,14 @@ class ReportSelectorForm(forms.Form):
 
     year = forms.ChoiceField(choices=YEARS, label="Year")
     quarter = forms.ChoiceField(choices=QUARTERS, label="Quarter")
+    operator = forms.ChoiceField()
+
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company', None)
+        super().__init__(*args, **kwargs)
+
+        if company:
+            self.fields['operator'].choices = [(operator.id, f"{operator.first_name} {operator.last_name}")  for operator in Operator.objects.filter(company=company)]
 
 
 class OperatorForm(forms.ModelForm):
