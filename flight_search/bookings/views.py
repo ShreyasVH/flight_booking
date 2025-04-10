@@ -90,7 +90,7 @@ class CreateBooking(APIView):
         if Booking.objects.filter(passenger=user, flight=flight).exists():
             return redirect('/search/')
 
-        total_seats = 30
+        total_seats = flight.capacity
         booked_seats = Booking.objects.filter(flight=flight).values_list('seat_number', flat=True)
         available_seats = [i for i in range(1, total_seats + 1) if i not in booked_seats]
 
@@ -105,11 +105,7 @@ class CreateBooking(APIView):
 
         flight = get_object_or_404(Flight, id=flight_id)
 
-        # Prevent duplicate booking
-        if Booking.objects.filter(passenger=user, flight=flight).exists():
-            return redirect('/search/')
-
-        total_seats = 30
+        total_seats = flight.capacity
         booked_seats = Booking.objects.filter(flight=flight).values_list('seat_number', flat=True)
         available_seats = [i for i in range(1, total_seats + 1) if i not in booked_seats]
 
