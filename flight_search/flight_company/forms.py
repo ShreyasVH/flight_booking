@@ -1,5 +1,5 @@
 from django import forms
-from .models import Flight
+from .models import Flight, Operator
 from datetime import date
 
 
@@ -13,6 +13,7 @@ class FlightForm(forms.ModelForm):
             'end_time': forms.TimeInput(attrs={'type': 'time'}),
         }
 
+
 class ReportSelectorForm(forms.Form):
     current_year = date.today().year
     start_year = 2000
@@ -21,3 +22,9 @@ class ReportSelectorForm(forms.Form):
 
     year = forms.ChoiceField(choices=YEARS, label="Year")
     quarter = forms.ChoiceField(choices=QUARTERS, label="Quarter")
+
+
+class CreateOperatorForm(forms.ModelForm):
+    class Meta:
+        model = Operator
+        exclude = ['company']  # we’ll assign company from the logged-in user

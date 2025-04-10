@@ -8,11 +8,13 @@ from .views import (
     OperatorReport,
     ListFlights,
     Passengers,
-    ReportSelector
+    ReportSelector,
+    ListOperators
 )
 
 urlpatterns: list[URLPattern] = [
-    path("operators/", CreateOperator.as_view(), name="create_operator"),
+    path("operators", CreateOperator.as_view(), name="create_operator"),
+    path("operators/list", ListOperators.as_view(), name="list_operators"),
     path(
         "operators/<int:operator_id>/", GetOrUpdateOperator.as_view(), name="operators"
     ),

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Operators</title>
+</head>
+<body>
+    <h2>Operators in {{ request.user.flight_company.name }}</h2>
+
+    {% if operators %}
+        <table border="1" cellpadding="8">
+            <tr>
+                <th>Sl No.</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+            </tr>
+            {% for operator in operators %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ operator.first_name }}</td>
+                    <td>{{ operator.last_name }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No operators created yet.</p>
+    {% endif %}
+
+    <p><a href="/dashboard/">Back to Dashboard</a></p>
+</body>
+</html>

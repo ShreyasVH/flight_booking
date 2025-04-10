@@ -1,6 +1,7 @@
 from django.db import models
 from auth_manager.models import FlightCompany
 
+
 class Flight(models.Model):
     company = models.ForeignKey(FlightCompany, on_delete=models.CASCADE)
     source = models.CharField(max_length=100)
@@ -13,3 +14,9 @@ class Flight(models.Model):
 
     def __str__(self):
         return f"{self.source} to {self.destination} on {self.date} by {self.company.name}"
+
+
+class Operator(models.Model):
+    company = models.ForeignKey(FlightCompany, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
