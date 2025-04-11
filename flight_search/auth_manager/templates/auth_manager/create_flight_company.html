@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up</title>
+</head>
+<body>
+    <h2>Register Company</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" disabled>Create</button>
+    </form>
+
+    <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+
+    <script>
+        const submitButton = document.querySelector('button[type="submit"]');
+        const password1Ele = document.querySelector('input[name="password1"]');
+        const password2Ele = document.querySelector('input[name="password2"]');
+        const password2HelperText = password2Ele.parentElement.querySelector('span');
+
+        function validatePasswords () {
+            const password1 = password1Ele.value;
+            const password2 = password2Ele.value;
+
+            if (password1 === password2) {
+                password2HelperText.style.color = 'initial';
+                submitButton.disabled = false;
+            } else {
+                password2HelperText.style.color = 'red';
+                submitButton.disabled = true;
+            }
+        }
+
+        password2Ele.addEventListener('keyup', validatePasswords)
+        password1Ele.addEventListener('keyup', validatePasswords)
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h2>Welcome, {{ username }}!</h2>
+    <p>You are logged in as a <strong>Admin</strong> user.</p>
+
+    <p><a href="/flight_company/approvals">Approve Users</a></p>
+
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+</body>
+</html>
