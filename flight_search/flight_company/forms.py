@@ -1,6 +1,7 @@
 from django import forms
 from .models import Flight, Operator
-from datetime import date
+from datetime import date, datetime
+from django.utils import timezone
 
 
 class FlightForm(forms.ModelForm):
@@ -18,6 +19,19 @@ class FlightForm(forms.ModelForm):
 
         if company:
             self.fields['operator'].queryset = Operator.objects.filter(company=company)
+
+        now = timezone.now().strftime('%Y-%m-%dT%H:%M')
+
+        self.fields['start_time'].widget.attrs['min'] = now
+        self.fields['end_time'].widget.attrs['min'] = now
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get("start_time")
+        end_time = cleaned_data.get("end_time")
+
+        if start_time and end_time and end_time <= start_time:
+            raise forms.ValidationError("End time must be after start time.")
 
 
 class ReportSelectorForm(forms.Form):

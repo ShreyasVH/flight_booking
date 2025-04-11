@@ -71,12 +71,15 @@ class CreateFlight(APIView):
         ...
         user = request.user
         form = FlightForm(request.POST)
+
         if form.is_valid():
             flight = form.save(commit=False)
             flight.company = user.flight_company
             flight.save()
 
-        return redirect('/flights/list')
+            return redirect('/flights/list')
+        else:
+            return render(request, 'flight_company/create_flight.html', {'form': form})
 
     def get(self, request: Request):
         user = request.user
