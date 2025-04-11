@@ -93,8 +93,6 @@ class DashboardView(APIView):
 
 
 class CreateFlightCompanyView(APIView):
-    permission_classes = [IsAdmin]
-
     def get(self, request: Request):
         form = CreateFlightCompanyForm()
         return render(request, 'auth_manager/create_flight_company.html', {'form': form})
