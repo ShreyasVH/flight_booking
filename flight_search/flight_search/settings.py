@@ -159,7 +159,6 @@ REST_FRAMEWORK = {
 
 DATABASE_ROUTERS = ['flight_search.db_router.MasterReplicaRouter']
 
-# settings.py
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
