@@ -12,6 +12,7 @@ from django.utils.decorators import method_decorator
 from .models import User, FlightCompany
 from django.contrib import messages
 from auth_manager.permissions import IsAdmin
+from rest_framework.permissions import IsAuthenticated
 
 
 class LoginView(APIView):
@@ -54,42 +55,46 @@ class LogoutView(APIView):
         return redirect('/user/login')
 
 
-def signup_view(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            user.role = 'PASSENGER'
-            user.save()
-            messages.success(request, 'Signup successful. Please login')
-            return redirect('/user/login')
-    else:
+class SignUpView(APIView):
+    def get(self, request: Request):
         form = SignUpForm()
-    return render(request, 'auth_manager/signup.html', {'form': form})
+        return render(request, 'auth_manager/signup.html', {'form': form})
+
+    def post(self, request: Request):
+        form = SignUpForm(request.POST)
+        user = form.save()
+        user.role = 'PASSENGER'
+        user.save()
+        messages.success(request, 'Signup successful. Please login')
+        return redirect('/user/login')
 
 
-@login_required
-def dashboard_view(request):
-    user = request.user
-    context = {
-        'username': user.username,
-        'role': user.role,
-    }
+class DashboardView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    if user.role == 'PASSENGER':
-        template_name = 'auth_manager/dashboard_passenger.html'
-    elif user.role == 'ADMIN':
-        template_name = 'auth_manager/dashboard_admin.html'
-    elif user.role == 'FLIGHT_COMPANY':
-        context['company_name'] = user.flight_company.name if user.flight_company else 'N/A'
-        template_name = 'auth_manager/dashboard_company.html'
-    else:
-        template_name = 'auth_manager/dashboard_unknown.html'
+    def get(self, request: Request):
+        user = request.user
+        context = {
+            'username': user.username,
+            'role': user.role,
+        }
 
-    return render(request, template_name, context)
+        if user.role == 'PASSENGER':
+            template_name = 'auth_manager/dashboard_passenger.html'
+        elif user.role == 'ADMIN':
+            template_name = 'auth_manager/dashboard_admin.html'
+        elif user.role == 'FLIGHT_COMPANY':
+            context['company_name'] = user.flight_company.name if user.flight_company else 'N/A'
+            template_name = 'auth_manager/dashboard_company.html'
+        else:
+            template_name = 'auth_manager/dashboard_unknown.html'
+
+        return render(request, template_name, context)
 
 
 class CreateFlightCompanyView(APIView):
+    permission_classes = [IsAdmin]
+
     def get(self, request: Request):
         form = CreateFlightCompanyForm()
         return render(request, 'auth_manager/create_flight_company.html', {'form': form})
