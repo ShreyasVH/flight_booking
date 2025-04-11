@@ -13,7 +13,6 @@ from datetime import datetime, timedelta
 from django.core.cache import cache
 
 class Search(APIView):
-    # implement proper permissions here
     permission_classes = [IsAuthenticated, IsPassenger]
 
     def post(
@@ -28,43 +27,43 @@ class Search(APIView):
         """
         ...
 
+        source = request.POST.get('source')
+        destination = request.POST.get('destination')
+        date = request.POST.get('date')
+
+        now = datetime.now()
+        all_flights = Flight.objects.filter(start_time__gte=now)
+        flights = all_flights
+        if source or destination or date:
+            source_key = (source or 'any').strip().lower()
+            destination_key = (destination or 'any').strip().lower()
+            date_key = date.isoformat() if date else 'any'
+
+            cache_key = f"search:{source_key}:{destination_key}:{date_key}"
+            cached_data = cache.get(cache_key)
+
+            if cached_data is None:
+                flights = all_flights
+                if source:
+                    flights = flights.filter(source__icontains=source)
+                if destination:
+                    flights = flights.filter(destination__icontains=destination)
+                if date:
+                    start = datetime.combine(date, datetime.min.time())
+                    end = start + timedelta(days=1)
+                    flights = flights.filter(start_time__gte=start, start_time__lt=end)
+                cache.set(cache_key, [flight.serialize() for flight in flights], timeout=60 * 5)
+            else:
+                print('---------Fetching from cache')
+                flights = [Flight.deserialize(flight_data) for flight_data in cached_data]
+
+        return Response({'flights': [flight.serialize() for flight in flights]})
+
     def get(self, request: Request):
         user = request.user
 
         form = FlightSearchForm(request.GET or None)
-        now = datetime.now()
-        all_flights = Flight.objects.filter(start_time__gte=now)
-        flights = all_flights
-
-        if form.is_valid():
-            source = form.cleaned_data.get('source')
-            destination = form.cleaned_data.get('destination')
-            date = form.cleaned_data.get('date')
-
-            if source or destination or date:
-                source_key = (source or 'any').strip().lower()
-                destination_key = (destination or 'any').strip().lower()
-                date_key = date.isoformat() if date else 'any'
-
-                cache_key = f"search:{source_key}:{destination_key}:{date_key}"
-                cached_data = cache.get(cache_key)
-
-                if cached_data is None:
-                    flights = all_flights
-                    if source:
-                        flights = flights.filter(source__icontains=source)
-                    if destination:
-                        flights = flights.filter(destination__icontains=destination)
-                    if date:
-                        start = datetime.combine(date, datetime.min.time())
-                        end = start + timedelta(days=1)
-                        flights = flights.filter(start_time__gte=start, start_time__lt=end)
-                    cache.set(cache_key, [flight.serialize() for flight in flights], timeout=60*5)
-                else:
-                    print('---------Fetching from cache')
-                    flights = [Flight.deserialize(flight_data) for flight_data in cached_data]
-
-        return render(request, 'bookings/flight_search.html', {'form': form, 'flights': flights})
+        return render(request, 'bookings/flight_search.html', {'form': form})
 
 
 class GetOrUpdateBooking(APIView):
@@ -88,7 +87,7 @@ class MyBookings(APIView):
     def get(self, request: Request):
         user = request.user
         now = datetime.now()
-        bookings = Booking.objects.select_related('flight').filter(passenger=user, flight__start_time__gte=now).order_by('flight__start_time')
+        bookings = Booking.objects.select_related('flight').filter(passenger=user, flight__start_time__gte=now).order_by('flight__start_time', 'booked_at')
 
         return render(request, 'bookings/my_bookings.html', {'bookings': bookings})
 

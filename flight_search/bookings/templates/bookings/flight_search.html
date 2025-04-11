@@ -7,41 +7,66 @@
     <h2>Search for Flights</h2>
 
     <form method="get">
+        {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Search</button>
     </form>
 
     <hr>
-
-    {% if flights %}
-        <table border="1">
-            <tr>
-                <th>Company</th>
-                <th>Source</th>
-                <th>Destination</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Cost</th>
-                <th>Action</th>
-            </tr>
-            {% for flight in flights %}
-            <tr>
-                <td>{{ flight.company }}</td>
-                <td>{{ flight.source }}</td>
-                <td>{{ flight.destination }}</td>
-                <td>{{ flight.start_time }}</td>
-                <td>{{ flight.end_time }}</td>
-                <td>{{ flight.cost }}</td>
-                <td>
-                    <a href="/bookings/create/{{flight.id}}">Book</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>No flights found.</p>
-    {% endif %}
+    <div id="flight-results"></div>
 
     <p><a href="/dashboard/">Back to Dashboard</a></p>
+
+
+    <script>
+        document.querySelector("form").addEventListener("submit", function(e) {
+        e.preventDefault(); // Prevent form submission
+
+        // Prepare the form data
+        const formData = new FormData(this);
+
+        // Send AJAX request
+        fetch('/search/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const resultsContainer = document.getElementById("flight-results");
+
+            // Build the results table
+            if (data.flights && data.flights.length > 0) {
+                let table = '<table border="1"><tr><th>Company</th><th>Source</th><th>Destination</th><th>Start Time</th><th>End Time</th><th>Duration (hrs)</th><th>Cost</th></tr>';
+
+                data.flights.forEach(flight => {
+                    table += `<tr>
+                                <td>${flight.company_name}</td>
+                                <td>${flight.source}</td>
+                                <td>${flight.destination}</td>
+                                <td>${flight.start_time}</td>
+                                <td>${flight.end_time}</td>
+                                <td>${((new Date(flight.end_time)) - (new Date(flight.start_time))) / 3600 / 1000}</td>
+                                <td>${flight.cost}</td>
+                                <td>
+                                    <a href="/bookings/create/${flight.id}">Book</a>
+                                </td>
+                              </tr>`;
+                });
+
+                table += '</table>';
+                resultsContainer.innerHTML = table;
+            } else {
+                resultsContainer.innerHTML = '<p>No flights found.</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('There was an error fetching flight data.');
+        });
+    });
+    </script>
 </body>
 </html>

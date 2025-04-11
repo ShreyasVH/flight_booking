@@ -27,10 +27,11 @@ class Flight(models.Model):
             'id': self.id,
             'source': self.source,
             'destination': self.destination,
-            'start_time': self.start_time.isoformat(),
-            'end_time': self.end_time.isoformat(),
+            'start_time': self.start_time.strftime("%B %d %Y, %I:%M %p"),
+            'end_time': self.end_time.strftime("%B %d %Y, %I:%M %p"),
             'cost': float(self.cost),
             'company_id': self.company.id,
+            'company_name': self.company.name,
             'operator_id': self.operator.id
         }
 
@@ -42,8 +43,8 @@ class Flight(models.Model):
             id=data.get('id'),
             source=data['source'],
             destination=data['destination'],
-            start_time=datetime.fromisoformat(data['start_time']),
-            end_time=datetime.fromisoformat(data['end_time']),
+            start_time=datetime.strptime(data['start_time'], "%B %d %Y, %I:%M %p"),
+            end_time=datetime.strptime(data['end_time'], "%B %d %Y, %I:%M %p"),
             cost=Decimal(data['cost']).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),
             company_id=data['company_id'],
             operator_id=data['operator_id'],
