@@ -89,11 +89,19 @@ WSGI_APPLICATION = "flight_search.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get('DB_NAME'),
-        "USER": os.environ.get('DB_USER'),
-        "PASSWORD": os.environ.get('DB_PASSWORD'),
-        "HOST": os.environ.get('DB_HOST'),
-        "PORT": os.environ.get('DB_PORT'),
+        "NAME": os.environ.get('MASTER_DB_NAME'),
+        "USER": os.environ.get('MASTER_DB_USER'),
+        "PASSWORD": os.environ.get('MASTER_DB_PASSWORD'),
+        "HOST": os.environ.get('MASTER_DB_HOST'),
+        "PORT": os.environ.get('MASTER_DB_PORT'),
+    },
+    "replica": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get('REPLICA_DB_NAME'),
+        "USER": os.environ.get('REPLICA_DB_USER'),
+        "PASSWORD": os.environ.get('REPLICA_DB_PASSWORD'),
+        "HOST": os.environ.get('REPLICA_DB_HOST'),
+        "PORT": os.environ.get('REPLICA_DB_PORT'),
     }
 }
 
@@ -148,3 +156,5 @@ LOGIN_URL = '/user/login/'
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'flight_search.exception_handlers.custom_exception_handler'
 }
+
+DATABASE_ROUTERS = ['flight_search.db_router.MasterReplicaRouter']
