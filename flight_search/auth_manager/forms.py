@@ -4,13 +4,6 @@ from .models import User, FlightCompany
 
 
 class SignUpForm(UserCreationForm):
-    role = forms.ChoiceField(choices=User.ROLE_CHOICES)
-    flight_company = forms.ModelChoiceField(
-        queryset=FlightCompany.objects.all(),
-        required=False,
-        help_text="Required only if registering as a Flight Company user"
-    )
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password1'].help_text = ''
@@ -18,7 +11,7 @@ class SignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'role', 'flight_company', 'password1', 'password2')
+        fields = ('username', 'email', 'password1', 'password2')
 
 
 class CreateFlightCompanyForm(UserCreationForm):

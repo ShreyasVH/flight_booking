@@ -14,22 +14,6 @@
     <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
 
     <script>
-        const selectedRole = document.querySelector('select[name="role"]');
-        const companyField = document.querySelector('select[name="flight_company"]').parentElement;
-
-        function toggleCompanyField() {
-            if (selectedRole.value === 'FLIGHT_COMPANY') {
-                companyField.style.display = 'block';
-            } else {
-                companyField.style.display = 'none';
-            }
-        }
-
-        toggleCompanyField();
-
-        selectedRole.addEventListener('change', toggleCompanyField);
-
-
         const submitButton = document.querySelector('button[type="submit"]');
         const password1Ele = document.querySelector('input[name="password1"]');
         const password2Ele = document.querySelector('input[name="password2"]');

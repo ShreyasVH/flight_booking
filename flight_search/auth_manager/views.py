@@ -59,8 +59,10 @@ def signup_view(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            user.role = 'PASSENGER'
+            user.save()
             messages.success(request, 'Signup successful. Please login')
-            return redirect('/user/login')  # or a dashboard URL
+            return redirect('/user/login')
     else:
         form = SignUpForm()
     return render(request, 'auth_manager/signup.html', {'form': form})
