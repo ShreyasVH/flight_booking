@@ -1,0 +1,14 @@
+export MASTER_DB_NAME=
+export MASTER_DB_HOST=
+export MASTER_DB_PORT=
+export MASTER_DB_USER=
+export MASTER_DB_PASSWORD=
+
+export REPLICA_DB_NAME=
+export REPLICA_DB_HOST=
+export REPLICA_DB_PORT=
+export REPLICA_DB_USER=
+export REPLICA_DB_PASSWORD=
+
+export REDIS_HOST=
+export REDIS_PORT=
