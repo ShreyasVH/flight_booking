@@ -10,6 +10,7 @@ from bookings.models import Booking
 from rest_framework.permissions import IsAuthenticated
 from auth_manager.permissions import IsPassenger
 from datetime import datetime, timedelta
+from django.core.cache import cache
 
 class Search(APIView):
     # implement proper permissions here
@@ -32,21 +33,36 @@ class Search(APIView):
 
         form = FlightSearchForm(request.GET or None)
         now = datetime.now()
-        flights = Flight.objects.filter(start_time__gte=now)
+        all_flights = Flight.objects.filter(start_time__gte=now)
+        flights = all_flights
 
         if form.is_valid():
             source = form.cleaned_data.get('source')
             destination = form.cleaned_data.get('destination')
             date = form.cleaned_data.get('date')
 
-            if source:
-                flights = flights.filter(source__icontains=source)
-            if destination:
-                flights = flights.filter(destination__icontains=destination)
-            if date:
-                start = datetime.combine(date, datetime.min.time())
-                end = start + timedelta(days=1)
-                flights = flights.filter(start_time__gte=start, start_time__lt=end)
+            if source or destination or date:
+                source_key = (source or 'any').strip().lower()
+                destination_key = (destination or 'any').strip().lower()
+                date_key = date.isoformat() if date else 'any'
+
+                cache_key = f"search:{source_key}:{destination_key}:{date_key}"
+                cached_data = cache.get(cache_key)
+
+                if cached_data is None:
+                    flights = all_flights
+                    if source:
+                        flights = flights.filter(source__icontains=source)
+                    if destination:
+                        flights = flights.filter(destination__icontains=destination)
+                    if date:
+                        start = datetime.combine(date, datetime.min.time())
+                        end = start + timedelta(days=1)
+                        flights = flights.filter(start_time__gte=start, start_time__lt=end)
+                    cache.set(cache_key, [flight.serialize() for flight in flights], timeout=60*5)
+                else:
+                    print('---------Fetching from cache')
+                    flights = [Flight.deserialize(flight_data) for flight_data in cached_data]
 
         return render(request, 'bookings/flight_search.html', {'form': form, 'flights': flights})
 

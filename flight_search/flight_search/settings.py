@@ -158,3 +158,15 @@ REST_FRAMEWORK = {
 }
 
 DATABASE_ROUTERS = ['flight_search.db_router.MasterReplicaRouter']
+
+# settings.py
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT')}",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
